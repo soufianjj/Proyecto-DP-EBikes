@@ -52,7 +52,7 @@ public class Location
      */
     public int distance(Location destination)
     {
-         //TODO: Complete this code
+         
         return 0;
     }
     
