@@ -21,16 +21,16 @@ public class Location
     {
         if(x < 0) {
             throw new IllegalArgumentException(
-                        "Negative x-coordinate: " + x);
+                "Negative x-coordinate: " + x);
         }
         if(y < 0) {
             throw new IllegalArgumentException(
-                        "Negative y-coordinate: " + y);
+                "Negative y-coordinate: " + y);
         }        
         this.x = x;
         this.y = y;
     }
-    
+
     /**
      * Generates the next location to visit in a direct line (Manhattan-style diagonal/straight move) 
      * from this location to the destination.
@@ -40,8 +40,9 @@ public class Location
      */
     public Location nextLocation(Location destination)
     {
-         //TODO: Complete this code
-        return null;
+        int nextX = x + Integer.compare(destination.getX(), x);
+        int nextY = y + Integer.compare(destination.getY(), y);
+        return new Location(nextX, nextY);
     }
 
     /**
@@ -52,10 +53,11 @@ public class Location
      */
     public int distance(Location destination)
     {
-         //TODO: Complete this code
-        return 0;
+        int deltaX = Math.abs(destination.getX() - x);
+        int deltaY = Math.abs(destination.getY() - y);
+        return Math.max(deltaX, deltaY);
     }
-    
+
     /**
      * Implement content equality for locations.
      * @param other The object to compare with.
@@ -64,10 +66,10 @@ public class Location
     @Override
     public boolean equals(Object other)
     {
-         //TODO: Complete this code
+        //TODO: Complete this code
         return true;
     }
-    
+
     /**
      * @return A string representation of the location in the format "x-y".
      */
