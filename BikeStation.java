@@ -11,15 +11,20 @@ import java.util.stream.Collectors;
  */
 public class BikeStation
 {
-    //TODO: Complete this code
+    private String id;
+    private Location location;
+    private List<Dock> docks;
 
     /**
      * Constructor for objects of class BikeStation.
-     * //TODO complete the JavaDoc comments
+     * Creates a station with a default identifier ("AA00"), no location yet
+     * and an empty collection of docks.
      */
     public BikeStation(  )
     {
-        //TODO: Complete this code
+        this.id = "AA00";
+        this.location = null;
+        this.docks = new ArrayList<>();
     }
 
     /**
