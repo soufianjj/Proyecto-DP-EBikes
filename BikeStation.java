@@ -11,6 +11,12 @@ import java.util.stream.Collectors;
  */
 public class BikeStation
 {
+    private static final String ID_PATTERN = "[A-Z]{2}\\d{2}";
+    private static final Comparator <Dock> DOCK_COMPARATOR = Comparator.comparingDouble(Dock::getChargingSpeed).reversed()
+    .thenComparingDouble(Dock::getChargingRate)
+    .thenComparing(Dock::getID);
+    
+    
     private String id;
     private Location location;
     private List<Dock> docks;
@@ -29,11 +35,23 @@ public class BikeStation
 
     /**
      * Constructor for objects of class BikeStation.
-     * //TODO complete the JavaDoc comments
+     * @param id The unique identifier of the station: 2 uppercase letters
+     * (city) followed by 2 digits, e. g. "BB01".
+     * @param location The @link Location of the station. Must not be null.
+     * @throws IllegalArgumentException if the id does not have a valid format.
+     * @throws NullPointerException if location is null.
      */
     public BikeStation(String id, Location location)
     {
-        //TODO: Complete this code
+       if (id == null || !id.matches(ID_PATTERN)){
+           throw new IllegalArgumentException("Invalid station id (expected 2 letters + 2 digits, e.g. BB01):" + id);
+       }
+       if (location == null){
+           throw new NullPointerException("location must not be null");
+       }
+       this.id = id;
+       this.location = location;
+       this.docks = new ArrayList <>();
     }
     
     /**
@@ -51,19 +69,30 @@ public class BikeStation
      * @return The unique identifier of the charging station.
      */
     public String getId()
+    {  
+        return id;
+    }
+    /**
+     * @return The @link Location of the charging station.
+     */
+    public Location getLocation()
     {
-        //TODO: Complete this code   
-        return null;
+        return location;
     }
     
     
     /**
      * Adds a new {@link Dock} to the station.
      * @param dock The new Dock unit.
+     * @throws NullPointerException if dosck is null.
      */
     public void addDock(Dock dock)
     {
-       //TODO: Complete this code
+       if (dock == null){
+           throw new NullPointerException("dock must not be null");
+       }
+       docks.add(dock);
+       docks.sort(DOCK_COMPARATOR);
     }
     
     /**
@@ -73,9 +102,19 @@ public class BikeStation
      */
     public void setLocation(Location location)
     {
-       //TODO: Complete this code   
+       if (location == null){
+           throw new NullPointerException("location must not be null");
+       }
+       this.location = location;
     }
 
-    //TODO complete the rest of the code
-
+    @Override
+    public String toString()
+    {
+        return "BikeStation{id = '" + id + "', location = " + location + ", docks = " +
+            docks.stream().map(Dock::toString).collect(Collectors.joining(", ", "[", "])) + "};
+            
+    }
 }
+
+
