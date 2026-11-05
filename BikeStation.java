@@ -37,7 +37,7 @@ public class BikeStation
      * Constructor for objects of class BikeStation.
      * @param id The unique identifier of the station: 2 uppercase letters
      * (city) followed by 2 digits, e. g. "BB01".
-     * @param location The @link Location of the station. Must not be null.
+     * @param location The {@link Location} of the station. Must not be null.
      * @throws IllegalArgumentException if the id does not have a valid format.
      * @throws NullPointerException if location is null.
      */
@@ -56,13 +56,16 @@ public class BikeStation
     
     /**
      * Retrieves the first free {@link Dock} found at the station.
+     * Since the docks are kept sorted, this is the free dock with 
+     * the best charging speed (then lowest rate, the lowest id).
      * @return A free {@link Dock}, or possibly throws an exception if none are found (depending on stream implementation details).
+     * @throws java.util.NoSuchElementException if the station has no free dock.
      * **Note: The implementation assumes at least one free dock exists if called.**
+     * **ASSUMPTION: Dock provides isFree().
      */
     public Dock getFreeDock()
-    {
-       //TODO: Complete this code   
-        return null;        
+    { 
+        return docks.stream().filter(Dock::isFree).findFirst().orElseThrow();        
     }
 
     /**
@@ -73,13 +76,19 @@ public class BikeStation
         return id;
     }
     /**
-     * @return The @link Location of the charging station.
+     * @return The {@link Location} of the charging station.
      */
     public Location getLocation()
     {
         return location;
     }
-    
+    /**
+     * Adds a new 
+     */
+    public List<Dock> getDocks()
+    {
+        return Collections.unmodifiableList(docks);
+    }
     
     /**
      * Adds a new {@link Dock} to the station.
@@ -107,13 +116,15 @@ public class BikeStation
        }
        this.location = location;
     }
+    /**
+     * @return A string with the id, location and docks of the station.
+     */
 
     @Override
-    public String toString()
+   public String toString()
     {
-        return "BikeStation{id = '" + id + "', location = " + location + ", docks = " +
-            docks.stream().map(Dock::toString).collect(Collectors.joining(", ", "[", "])) + "};
-            
+        return "BikeStation{id='" + id + "', location=" + location + ", docks=" + 
+               docks.stream().map(Dock::toString).collect(Collectors.joining(", ", "[", "]")) + "}";
     }
 }
 
