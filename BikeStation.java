@@ -1,6 +1,7 @@
 import java.util.List;
 import java.util.Collections;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 /**
@@ -13,10 +14,9 @@ public class BikeStation
 {
     private static final String ID_PATTERN = "[A-Z]{2}\\d{2}";
     private static final Comparator <Dock> DOCK_COMPARATOR = Comparator.comparingDouble(Dock::getChargingSpeed).reversed()
-    .thenComparingDouble(Dock::getChargingRate)
-    .thenComparing(Dock::getID);
-    
-    
+        .thenComparingDouble(Dock::getChargingFee)
+        .thenComparing(Dock::getId);
+
     private String id;
     private Location location;
     private List<Dock> docks;
@@ -43,17 +43,17 @@ public class BikeStation
      */
     public BikeStation(String id, Location location)
     {
-       if (id == null || !id.matches(ID_PATTERN)){
-           throw new IllegalArgumentException("Invalid station id (expected 2 letters + 2 digits, e.g. BB01):" + id);
-       }
-       if (location == null){
-           throw new NullPointerException("location must not be null");
-       }
-       this.id = id;
-       this.location = location;
-       this.docks = new ArrayList <>();
+        if (id == null || !id.matches(ID_PATTERN)){
+            throw new IllegalArgumentException("Invalid station id (expected 2 letters + 2 digits, e.g. BB01):" + id);
+        }
+        if (location == null){
+            throw new NullPointerException("location must not be null");
+        }
+        this.id = id;
+        this.location = location;
+        this.docks = new ArrayList <>();
     }
-    
+
     /**
      * Retrieves the first free {@link Dock} found at the station.
      * Since the docks are kept sorted, this is the free dock with 
@@ -75,6 +75,7 @@ public class BikeStation
     {  
         return id;
     }
+
     /**
      * @return The {@link Location} of the charging station.
      */
@@ -82,6 +83,7 @@ public class BikeStation
     {
         return location;
     }
+
     /**
      * Adds a new 
      */
@@ -89,7 +91,7 @@ public class BikeStation
     {
         return Collections.unmodifiableList(docks);
     }
-    
+
     /**
      * Adds a new {@link Dock} to the station.
      * @param dock The new Dock unit.
@@ -97,13 +99,13 @@ public class BikeStation
      */
     public void addDock(Dock dock)
     {
-       if (dock == null){
-           throw new NullPointerException("dock must not be null");
-       }
-       docks.add(dock);
-       docks.sort(DOCK_COMPARATOR);
+        if (dock == null){
+            throw new NullPointerException("dock must not be null");
+        }
+        docks.add(dock);
+        docks.sort(DOCK_COMPARATOR);
     }
-    
+
     /**
      * Set the current location of the charging station.
      * @param location Where it is. Must not be null.
@@ -111,21 +113,21 @@ public class BikeStation
      */
     public void setLocation(Location location)
     {
-       if (location == null){
-           throw new NullPointerException("location must not be null");
-       }
-       this.location = location;
+        if (location == null){
+            throw new NullPointerException("location must not be null");
+        }
+        this.location = location;
     }
+
     /**
      * @return A string with the id, location and docks of the station.
      */
 
     @Override
-   public String toString()
+    public String toString()
     {
         return "BikeStation{id='" + id + "', location=" + location + ", docks=" + 
-               docks.stream().map(Dock::toString).collect(Collectors.joining(", ", "[", "]")) + "}";
+        docks.stream().map(Dock::toString).collect(Collectors.joining(", ", "[", "]")) + "}";
     }
 }
-
 
