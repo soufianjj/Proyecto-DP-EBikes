@@ -9,15 +9,20 @@ import java.util.*;
  */
 public class EBCompany  
 {
-    //TODO: Complete this code
-
+    public static final int MOVINGCOST = 1;
+    
+    private final String name;
+    private final List <BikeStation> bikes;
+    private final List <BikeStation> stations;
     /**
      * Constructor for objects of class EVCompany.
      * @param name The name of the company.
      */
     public EBCompany(String name)
     {
-        //TODO: Complete this code
+        this.name = name;
+        this.bikes = new ArrayList<>();
+        this.stations = new ArrayList<>();
     }
 
     /**
@@ -47,7 +52,11 @@ public class EBCompany
      */
     public BikeStation getBikeStation(String id)
     {
-        //TODO: Complete this code
+        for(BikeStation station : stations){
+            if(station.getId().equals(id)){
+                return station;
+            }
+        }
         return null;
     }
 
@@ -58,11 +67,30 @@ public class EBCompany
      */
     public BikeStation getBikeStation(Location location)
     {
-        //TODO: Complete this code
+        for(BikeStation station : stations){
+            if(station.getLocation() != null && station.getLocation().equals(location)){
+                return station;
+            }
+        }
         return null;
     }
     
-    
+    /**
+     * @return An unmodifiable view of the bike stations owned by the company.
+     */
+    public List<BikeStation> getBikeStation()
+    {
+        return Collections.unmodifiableList(stations);
+    }
+ 
+    /**
+     * @return An unmodifiable view of the electric bikes of the company's fleet.
+     
+    public List<ElectricBike> getElectricBikes()
+    {
+        return Collections.unmodifiableList(bikes);
+    }
+    */
     /**
      * @return The total number of managed {@link BikeStation}s.
      */

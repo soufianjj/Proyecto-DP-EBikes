@@ -11,7 +11,6 @@ import java.util.Collections;
  */
 public class Dock
 {
-    //TODO: Complete this code
     private static final String ID_PATTERN = "[A-Z]{2}\\d{2}_\\d{2,3}";
     private String id;
     private int chargingSpeed;
@@ -26,7 +25,6 @@ public class Dock
      */
     public Dock(String id, int speed, float fee)
     {
-        //TODO: Complete this code
         if (id == null || !id.matches(ID_PATTERN)) {
             throw new IllegalArgumentException("Invalid dock id: " + id);
         }
@@ -50,7 +48,6 @@ public class Dock
      */
     public String toString()
     {
-        //TODO: Complete this code
         return "(Dock: " + id + ", " + chargingSpeed + "wh, " + chargingFee + "€, "
         + getNumerEVRecharged() + ", " + amountCollected + "€)";
     }    
@@ -103,7 +100,7 @@ public class Dock
     {
         return chargingFee;
     }
-
+    
     /**
      * @return The amount in € collected by this dock.
      */
