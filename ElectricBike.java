@@ -13,25 +13,23 @@ import java.util.NoSuchElementException;
 public class ElectricBike 
 {
     private static final int ID_LENGTH = 6;
-    
+
     private final String idBike;
     private final EBCompany company;
-    
+
     private Location location;
     private Location targetLocation;
     private Location rechargingLocation;
-    
+
     private int idleCount;
-    
+
     private final int batteryCapacity;
     private int batteryLevel;
     private int wsCharged;
     private int chargesCount;
     private double chargesCost;
-    
+
     private final List<Dock> docks;
-    
-    
 
     /**
      * Constructor of class ElectricBike.
@@ -41,35 +39,35 @@ public class ElectricBike
      * @param id The identificator of the bike.
      * @param batteryCapacity The maximum capacity of the battery.
      * @throws NullPointerException If company, location, or targetLocation is null.
-     * @throws IllegalArgumenteException if the id does not have 6 characters.
+     * @throws IllegalArgumentException if the id does not have 6 characters.
      */
     public ElectricBike(EBCompany company, Location location, Location targetLocation, String id, int batteryCapacity)
     {
-           if (company == null){
-               throw new NullPointerException("company must not be null");
-           }
-           if (location == null){
-               throw new NullPointerException("location must not be null");
-           }
-           if (targetLocation == null){
-               throw new NullPointerException("targetLocation must not be null");
-           }
-           if (id == null || id.length() != ID_LENGTH){
-               throw new IllegalArgumentException("The id must have " + ID_LENGTH + "characters: " + id);
-           }
-           this.company = company;
-           this.location = location;
-           this.targetLocation = targetLocation;
-           this.idBike = id;
-           this.batteryCapacity = batteryCapacity;
-           this.batteryLevel = batteryCapacity;
-           this.rechargingLocation = null;
-           this.idleCount = 0;
-           this.wsCharged = 0;
-           this.chargesCount = 0;
-           this.chargesCost = 0;
-           this.docks = new ArrayList<>();
-           calculateRoute();
+        if (company == null){
+            throw new NullPointerException("company must not be null");
+        }
+        if (location == null){
+            throw new NullPointerException("location must not be null");
+        }
+        if (targetLocation == null){
+            throw new NullPointerException("targetLocation must not be null");
+        }
+        if (id == null || id.length() != ID_LENGTH){
+            throw new IllegalArgumentException("The id must have " + ID_LENGTH + "characters: " + id);
+        }
+        this.company = company;
+        this.location = location;
+        this.targetLocation = targetLocation;
+        this.idBike = id;
+        this.batteryCapacity = batteryCapacity;
+        this.batteryLevel = batteryCapacity;
+        this.rechargingLocation = null;
+        this.idleCount = 0;
+        this.wsCharged = 0;
+        this.chargesCount = 0;
+        this.chargesCost = 0;
+        this.docks = new ArrayList<>();
+        calculateRoute();
     }
 
     /**
@@ -111,7 +109,6 @@ public class ElectricBike
         return rechargingLocation;
     }
 
-
     /**
      * Set the required final target location.
      * @param location Where to go. Must not be null.
@@ -119,7 +116,7 @@ public class ElectricBike
      */
     public void setTargetLocation(Location location)
     {
-         if(location == null){
+        if(location == null){
             throw new NullPointerException("location must not be null");
         }
         this.targetLocation = location;
@@ -189,9 +186,9 @@ public class ElectricBike
                     best = stationLocation;
                 }
             }
+        }
+        rechargingLocation = best;
     }
-    rechargingLocation = best;
-}
 
     /**
      * Get the Manhattan-like distance to the final target location from the current location.
@@ -220,8 +217,9 @@ public class ElectricBike
         incrementCharges();
         incrementChargesCost(charged * dock.getChargingFee());
         if(!docks.contains(dock)){
-           docks.add(dock); 
+            docks.add(dock); 
         }
+        dock.addBike(this);
         calculateRoute();
     } 
 
@@ -251,23 +249,26 @@ public class ElectricBike
      */
     public void act()
     {
-       Location destination = (rechargingLocation != null) ? rechargingLocation : targetLocation;
-       
-       if(rechargingLocation != null && location.equals(rechargingLocation)){
-           BikeStation station = company.getBikeStation(rechargingLocation);
-           try{
-               recharge(station.getFreeDock());
-           } catch(NoSuchElementException | NullPointerException e){
-               idleCount++;
-           }
-       }
-       else if(location.equals(destination) || batteryLevel < EBCompany.MOVINGCOST){
-           idleCount++;
-       }
-       else{
-           setLocation(location.nextLocation(destination));
-           reduceBatteryLevel();
-       }
+        Location destination = (rechargingLocation != null) ? rechargingLocation : targetLocation;
+
+        if(location.equals(destination) || (rechargingLocation == null && !enoughBattery(distanceToTheTargetLocation()))){
+            idleCount++;          
+            return;
+        }
+
+        setLocation(location.nextLocation(destination));
+        reduceBatteryLevel();
+
+        if(location.equals(destination)){
+            BikeStation station = company.getBikeStation(rechargingLocation);
+            if(station != null){
+                try{
+                    recharge(station.getFreeDock());
+                } catch(NoSuchElementException e){
+
+                }
+            }
+        }
     }
 
     /**
@@ -275,7 +276,7 @@ public class ElectricBike
      * Ensures the battery level does not go below zero.
      */
     public void reduceBatteryLevel(){
-       batteryLevel = Math.max(0, batteryLevel - EBCompany.MOVINGCOST); 
+        batteryLevel = Math.max(0, batteryLevel - EBCompany.MOVINGCOST); 
     }
 
     /**
@@ -284,15 +285,13 @@ public class ElectricBike
      */
     @Override
     public String toString(){
-        return "ElectricBike " + idBike + 
-        " - battery: " + batteryLevel + "/" + batteryCapacity + " wh" +
-        ", wh charged: " + wsCharged +
-        ", charges: " + chargesCount +
-        ", charges cost: " + chargesCost +
-        ", idle count: " + idleCount +
-        ", route: " + getStringRoute();
+        String route = location + ", " + (rechargingLocation 
+        != null ? rechargingLocation + ", " : "") + targetLocation;
+        return "ElectricBike: " + idBike + ", " + batteryCapacity + "wh, " 
+        + batteryLevel + "wh, "+ chargesCount + ", " + chargesCost + "€, " 
+        + idleCount + ", " + route;
     }
-    
+
     /**
      * @return An unmodifiable view of the docks where the bike has charged.
      */
@@ -300,5 +299,4 @@ public class ElectricBike
         return Collections.unmodifiableList(docks);
     }
 
-   
 }

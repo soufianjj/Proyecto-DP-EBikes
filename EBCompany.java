@@ -9,10 +9,10 @@ import java.util.*;
  */
 public class EBCompany  
 {
-    public static final int MOVINGCOST = 1;
+    public static final int MOVINGCOST = 5;
     
     private final String name;
-    private final List <BikeStation> bikes;
+    private final Set <ElectricBike> bikes;
     private final List <BikeStation> stations;
     /**
      * Constructor for objects of class EVCompany.
@@ -21,27 +21,45 @@ public class EBCompany
     public EBCompany(String name)
     {
         this.name = name;
-        this.bikes = new ArrayList<>();
+        this.bikes = new HashSet<>();
         this.stations = new ArrayList<>();
+    }
+    
+    /**
+     * @return the name of the company.
+     */
+    public String getName(){
+        return name;
     }
 
     /**
      * Adds an {@link ElectricBike} to the company's fleet.
      * @param bike The electric bike to add.
+     * @throws NullPointerException if bike is null.
      */
     public void addElectricBike(ElectricBike bike)
     {       
-        //TODO: Complete this code
+        if(bike == null){
+            throw new NullPointerException("bike must not be null");
+        }
+        bikes.add(bike);
     }
 
     
     /**
      * Adds a {@link BikeStation} to the company's network.
+     * If a station with the same id already exists, it is not added again.
      * @param station The bike station to add.
+     * @throws NullPointerException if station is null.
      */
     public void addBikeStation(BikeStation station)
     {       
-        //TODO: Complete this code
+        if(station == null){
+            throw new NullPointerException("station must not be null");
+        }
+        if(getBikeStation(station.getId()) == null){
+            stations.add(station);
+        }
     }
     
     
@@ -84,26 +102,25 @@ public class EBCompany
     }
  
     /**
-     * @return An unmodifiable view of the electric bikes of the company's fleet.
-     
-    public List<ElectricBike> getElectricBikes()
-    {
-        return Collections.unmodifiableList(bikes);
-    }
+    @return An unmodifiable view of the electric bikes of the company's fleet.
     */
+    public Set<ElectricBike> getElectricBikes()
+    {
+        return Collections.unmodifiableSet(bikes);
+    }
     /**
      * @return The total number of managed {@link BikeStation}s.
      */
     public int getNumberOfStations(){
-        //TODO: Complete this code
-        return 0;
+        return stations.size();
     }
     
     /**
      * Clears all managed bikes and stations, resetting the company to an empty state.
      */
     public void reset(){
-        //TODO: Complete this code
+        bikes.clear();
+        stations.clear();
     }
     
 }
