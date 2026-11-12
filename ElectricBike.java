@@ -12,7 +12,7 @@ import java.util.NoSuchElementException;
  */
 public class ElectricBike 
 {
-    private static final int ID_LENGTH = 6;
+    private static final int ID_LENGTH = 5;
 
     private final String idBike;
     private final EBCompany company;
@@ -253,13 +253,14 @@ public class ElectricBike
 
         if(location.equals(destination) || (rechargingLocation == null && !enoughBattery(distanceToTheTargetLocation()))){
             idleCount++;          
-            return;
         }
-
+        
+        else{
         setLocation(location.nextLocation(destination));
         reduceBatteryLevel();
+    }
 
-        if(location.equals(destination)){
+        if(rechargingLocation != null && location.equals(rechargingLocation)){
             BikeStation station = company.getBikeStation(rechargingLocation);
             if(station != null){
                 try{
