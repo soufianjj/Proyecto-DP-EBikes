@@ -129,5 +129,17 @@ public class BikeStation
         return "BikeStation{id='" + id + "', location=" + location + ", docks=" + 
         docks.stream().map(Dock::toString).collect(Collectors.joining(", ", "[", "]")) + "}";
     }
+
+    /**
+     * @return The total number of recharges performed in the docks of this station.
+     */
+    public int getBikesRechargedCount()
+    {
+        int total = 0;
+        for (Dock dock : docks) {
+            total += dock.getNumerEVRecharged();
+        }
+        return total;
+    }
 }
 

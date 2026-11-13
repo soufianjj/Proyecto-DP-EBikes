@@ -28,6 +28,9 @@ public class ElectricBike
     private int wsCharged;
     private int chargesCount;
     private double chargesCost;
+    
+    private static final int NOT_ARRIVED = Integer.MAX_VALUE;
+    private int arrivalStep;  
 
     private final List<Dock> docks;
 
@@ -67,6 +70,7 @@ public class ElectricBike
         this.chargesCount = 0;
         this.chargesCost = 0;
         this.docks = new ArrayList<>();
+        this.arrivalStep = NOT_ARRIVED;
         calculateRoute();
     }
 
@@ -199,29 +203,6 @@ public class ElectricBike
         return location.distance(targetLocation);
     }
 
-    /**
-     * Simulates the recharging process when the bike arrives at a {@code rechargingLocation}.
-     * The battery is charged to full capacity, the cost is calculated, and the route is recalculated.
-     * The cost is the wh charged multiplied by the charging rate of the dock.
-     * @param dock The {@link Dock} used to charge the bike. Must not be null.
-     * @throws NullPointerException if dock is null.
-     */
-    public void recharge(Dock dock)
-    {
-        if(dock == null){
-            throw new NullPointerException("dock must not be null");
-        }
-        int charged = batteryCapacity - batteryLevel;
-        batteryLevel = batteryCapacity;
-        wsCharged += charged;
-        incrementCharges();
-        incrementChargesCost(charged * dock.getChargingFee());
-        if(!docks.contains(dock)){
-            docks.add(dock); 
-        }
-        dock.addBike(this);
-        calculateRoute();
-    } 
 
     /**
      * Increments the count of recharges performed by this bike.
@@ -299,5 +280,78 @@ public class ElectricBike
     public List<Dock> getDocks(){
         return Collections.unmodifiableList(docks);
     }
+    
+    /**
+ * @return The step in which the bike reached its target, or Integer.MAX_VALUE if it has not arrived.
+ */
+public int getArrivalStep()
+{
+    return arrivalStep;
+}
+
+/**
+ * Recharges the bike to full capacity at the given dock and recalculates the route.
+ * @param dock The dock used. Must not be null.
+ * @return The cost in € of this recharge.
+ * @throws NullPointerException if dock is null.
+ */
+public float recharge(Dock dock)
+{
+    if (dock == null) {
+        throw new NullPointerException("dock must not be null");
+    }
+    int charged = batteryCapacity - batteryLevel;
+    float cost = dock.recharge(this, charged);
+    batteryLevel = batteryCapacity;
+    wsCharged += charged;
+    incrementCharges();
+    incrementChargesCost(cost);
+    if (!docks.contains(dock)) {
+        docks.add(dock);
+    }
+    calculateRoute();
+    return cost;
+}
+
+/**
+ * Carries out a single step of the bike's actions.
+ * @param step The current simulation step.
+ * @return A message if the bike recharged or reached its target in this step, null otherwise.
+ */
+public String act(int step)
+{
+    String event = null;
+    Location destination = (rechargingLocation != null) ? rechargingLocation : targetLocation;
+
+    if (location.equals(destination)
+        || (rechargingLocation == null && !enoughBattery(distanceToTheTargetLocation()))) {
+        idleCount++;
+    }
+    else {
+        setLocation(location.nextLocation(destination));
+        reduceBatteryLevel();
+        if (rechargingLocation == null && location.equals(targetLocation)) {
+            arrivalStep = step;
+            event = "ElectricBike: " + idBike + " at target destination ********";
+        }
+    }
+
+    if (rechargingLocation != null && location.equals(rechargingLocation)) {
+        BikeStation station = company.getBikeStation(rechargingLocation);
+        if (station != null) {
+            try {
+                Dock dock = station.getFreeDock();
+                int needed = batteryCapacity - batteryLevel;
+                float cost = recharge(dock);
+                event = "ElectricBike: " + idBike + " recharges: " + needed + "wh at dock: "
+                        + dock.getId() + " with cost: " + cost + "€ ********";
+            }
+            catch (NoSuchElementException e) {
+                // No free dock: the bike waits here until the end of the simulation.
+            }
+        }
+    }
+    return event;
+}
 
 }
