@@ -1,5 +1,5 @@
 Project: EV-Charging-Station-Simulation
-Authors: Professors of the Software Development Course (Desarrollo de Programas)
+Authors: Soufian Jabbouri Jabbouri, Jaime Leno Herráez.
 
 This project is an adaptation of the material for the Software Development (Desarrollo de Programas) 
 course at the University of Extremadura, based on the initial structure of the book:
@@ -14,5 +14,10 @@ EVs travel from an initial location to a target destination, planning intermedia
 at Charging Stations if their battery level is insufficient.
 The simulation also models the management of Chargers within each station.
 
-How to start this project:
-    To run the simulation, create an EVDemo object and invoke its run() method, or execute the static main() method of the EVDemo class.
+EXTRAS:
+- Correct use of the Iterator.
+- Correct use of the functionality provided by Collections and Comparators.
+- Unit tests for the project using JUnit.
+- Use of the Git functionality provided by BlueJ.
+
+How to start this project: To run the simulation, execute the static main() method of the EBikeDemo class.
