@@ -28,7 +28,7 @@ public class ElectricBike
     private int wsCharged;
     private int chargesCount;
     private double chargesCost;
-    
+
     private static final int NOT_ARRIVED = Integer.MAX_VALUE;
     private int arrivalStep;  
 
@@ -42,7 +42,7 @@ public class ElectricBike
      * @param id The identificator of the bike.
      * @param batteryCapacity The maximum capacity of the battery.
      * @throws NullPointerException If company, location, or targetLocation is null.
-     * @throws IllegalArgumentException if the id does not have 6 characters.
+     * @throws IllegalArgumentException if the id does not have 5 characters.
      */
     public ElectricBike(EBCompany company, Location location, Location targetLocation, String id, int batteryCapacity)
     {
@@ -56,7 +56,7 @@ public class ElectricBike
             throw new NullPointerException("targetLocation must not be null");
         }
         if (id == null || id.length() != ID_LENGTH){
-            throw new IllegalArgumentException("The id must have " + ID_LENGTH + "characters: " + id);
+            throw new IllegalArgumentException("The id must have " + ID_LENGTH + " characters: " + id);
         }
         this.company = company;
         this.location = location;
@@ -195,14 +195,13 @@ public class ElectricBike
     }
 
     /**
-     * Get the Manhattan-like distance to the final target location from the current location.
+     * Get the Chebyshev distance to the final target location from the current location.
      * @return The distance to the target location.
      */
     public int distanceToTheTargetLocation()
     {
         return location.distance(targetLocation);
     }
-
 
     /**
      * Increments the count of recharges performed by this bike.
@@ -222,38 +221,6 @@ public class ElectricBike
     }   
 
     /**
-     * Carries out a single step of the bike's actions.
-     * Moves one step towards the target (recharging or final) or stays idle.
-     * If the bike is at the recharging location, it recharges in a free dock
-     * of that station (staying idle if there is none). If it is already at the 
-     * final target, or it has no battery to move, it stays idle (idleCount is incremented).
-     */
-    public void act()
-    {
-        Location destination = (rechargingLocation != null) ? rechargingLocation : targetLocation;
-
-        if(location.equals(destination) || (rechargingLocation == null && !enoughBattery(distanceToTheTargetLocation()))){
-            idleCount++;          
-        }
-        
-        else{
-        setLocation(location.nextLocation(destination));
-        reduceBatteryLevel();
-    }
-
-        if(rechargingLocation != null && location.equals(rechargingLocation)){
-            BikeStation station = company.getBikeStation(rechargingLocation);
-            if(station != null){
-                try{
-                    recharge(station.getFreeDock());
-                } catch(NoSuchElementException e){
-
-                }
-            }
-        }
-    }
-
-    /**
      * Reduces the battery level by the cost of one movement step (defined in {@link EBCompany#MOVINGCOST}).
      * Ensures the battery level does not go below zero.
      */
@@ -263,12 +230,12 @@ public class ElectricBike
 
     /**
      * Returns a detailed string representation of the electric bike.
-     * @return A string containing the bike's name, plate, battery info, charge counts, costs, idle count, and route.
+     * @return A string containing the bike's name, id, battery info, charge counts, costs, idle count, and route.
      */
     @Override
     public String toString(){
         String route = location + ", " + (rechargingLocation 
-        != null ? rechargingLocation + ", " : "") + targetLocation;
+                != null ? rechargingLocation + ", " : "") + targetLocation;
         return "ElectricBike: " + idBike + ", " + batteryCapacity + "wh, " 
         + batteryLevel + "wh, "+ chargesCount + ", " + chargesCost + "€, " 
         + idleCount + ", " + route;
@@ -280,78 +247,78 @@ public class ElectricBike
     public List<Dock> getDocks(){
         return Collections.unmodifiableList(docks);
     }
-    
+
     /**
- * @return The step in which the bike reached its target, or Integer.MAX_VALUE if it has not arrived.
- */
-public int getArrivalStep()
-{
-    return arrivalStep;
-}
-
-/**
- * Recharges the bike to full capacity at the given dock and recalculates the route.
- * @param dock The dock used. Must not be null.
- * @return The cost in € of this recharge.
- * @throws NullPointerException if dock is null.
- */
-public float recharge(Dock dock)
-{
-    if (dock == null) {
-        throw new NullPointerException("dock must not be null");
+     * @return The step in which the bike reached its target, or Integer.MAX_VALUE if it has not arrived.
+     */
+    public int getArrivalStep()
+    {
+        return arrivalStep;
     }
-    int charged = batteryCapacity - batteryLevel;
-    float cost = dock.recharge(this, charged);
-    batteryLevel = batteryCapacity;
-    wsCharged += charged;
-    incrementCharges();
-    incrementChargesCost(cost);
-    if (!docks.contains(dock)) {
-        docks.add(dock);
+
+    /**
+     * Recharges the bike to full capacity at the given dock and recalculates the route.
+     * @param dock The dock used. Must not be null.
+     * @return The cost in € of this recharge.
+     * @throws NullPointerException if dock is null.
+     */
+    public float recharge(Dock dock)
+    {
+        if (dock == null) {
+            throw new NullPointerException("dock must not be null");
+        }
+        int charged = batteryCapacity - batteryLevel;
+        float cost = dock.recharge(this, charged);
+        batteryLevel = batteryCapacity;
+        wsCharged += charged;
+        incrementCharges();
+        incrementChargesCost(cost);
+        if (!docks.contains(dock)) {
+            docks.add(dock);
+        }
+        calculateRoute();
+        return cost;
     }
-    calculateRoute();
-    return cost;
-}
 
-/**
- * Carries out a single step of the bike's actions.
- * @param step The current simulation step.
- * @return A message if the bike recharged or reached its target in this step, null otherwise.
- */
-public String act(int step)
-{
-    String event = null;
-    Location destination = (rechargingLocation != null) ? rechargingLocation : targetLocation;
+    /**
+     * Carries out a single step of the bike's actions.
+     * @param step The current simulation step.
+     * @return A message if the bike recharged or reached its target in this step, null otherwise.
+     */
+    public String act(int step)
+    {
+        String event = null;
+        Location destination = (rechargingLocation != null) ? rechargingLocation : targetLocation;
 
-    if (location.equals(destination)
+        if (location.equals(destination)
         || (rechargingLocation == null && !enoughBattery(distanceToTheTargetLocation()))) {
-        idleCount++;
-    }
-    else {
-        setLocation(location.nextLocation(destination));
-        reduceBatteryLevel();
-        if (rechargingLocation == null && location.equals(targetLocation)) {
-            arrivalStep = step;
-            event = "ElectricBike: " + idBike + " at target destination ********";
+            idleCount++;
         }
-    }
+        else {
+            setLocation(location.nextLocation(destination));
+            reduceBatteryLevel();
+            if (rechargingLocation == null && location.equals(targetLocation)) {
+                arrivalStep = step;
+                event = "ElectricBike: " + idBike + " at target destination ********";
+            }
+        }
 
-    if (rechargingLocation != null && location.equals(rechargingLocation)) {
-        BikeStation station = company.getBikeStation(rechargingLocation);
-        if (station != null) {
-            try {
-                Dock dock = station.getFreeDock();
-                int needed = batteryCapacity - batteryLevel;
-                float cost = recharge(dock);
-                event = "ElectricBike: " + idBike + " recharges: " + needed + "wh at dock: "
-                        + dock.getId() + " with cost: " + cost + "€ ********";
-            }
-            catch (NoSuchElementException e) {
-                // No free dock: the bike waits here until the end of the simulation.
+        if (rechargingLocation != null && location.equals(rechargingLocation)) {
+            BikeStation station = company.getBikeStation(rechargingLocation);
+            if (station != null) {
+                try {
+                    Dock dock = station.getFreeDock();
+                    int needed = batteryCapacity - batteryLevel;
+                    float cost = recharge(dock);
+                    event = "ElectricBike: " + idBike + " recharges: " + needed + "wh at dock: "
+                    + dock.getId() + " with cost: " + cost + "€ ********";
+                }
+                catch (NoSuchElementException e) {
+                    // No free dock: the bike waits here until the end of the simulation.
+                }
             }
         }
+        return event;
     }
-    return event;
-}
 
 }

@@ -21,6 +21,10 @@ public class Dock
 
     /**
      * Constructor for objects of class Dock.
+     * @param id Dock id: station id, "_" and 2 or 3 digits (the statement says 2, the sample output uses 3).
+     * @param speed Charging speed in wh. Must be positive.
+     * @param fee Price in € per wh. Must not be negative.
+     * @throws IllegalArgumentException if the id format is invalid, the speed is not positive or the fee is negative.
      */
     public Dock(String id, int speed, float fee)
     {
@@ -61,6 +65,11 @@ public class Dock
     /**
      * Simulates the charging process for an {@link ElectricBike}.
      * Increases the amount collected and registers the bike as recharged.
+     * @param bike The bike being recharged. Must not be null.
+     * @param wh The energy supplied in wh. Must be positive.
+     * @return The cost in € of this recharge (wh * charging fee).
+     * @throws NullPointerException if bike is null.
+     * @throws IllegalArgumentException if wh is not positive.
      */
     public float recharge(ElectricBike bike, int wh){
         if (bike == null) {
@@ -98,7 +107,7 @@ public class Dock
     {
         return chargingFee;
     }
-    
+
     /**
      * @return The amount in € collected by this dock.
      */
@@ -148,6 +157,5 @@ public class Dock
         }
         amountCollected += amount;
     }
-
 
 }

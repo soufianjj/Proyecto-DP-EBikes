@@ -2,7 +2,6 @@ import java.util.List;
 import java.util.Collections;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.stream.Collectors;
 
 /**
  * Models an Electric Vehicle Charging Station.
@@ -21,17 +20,6 @@ public class BikeStation
     private Location location;
     private List<Dock> docks;
 
-    /**
-     * Constructor for objects of class BikeStation.
-     * Creates a station with a default identifier ("AA00"), no location yet
-     * and an empty collection of docks.
-     */
-    public BikeStation(  )
-    {
-        this.id = "AA00";
-        this.location = null;
-        this.docks = new ArrayList<>();
-    }
 
     /**
      * Constructor for objects of class BikeStation.
@@ -60,8 +48,6 @@ public class BikeStation
      * the best charging speed (then lowest rate, the lowest id).
      * @return A free {@link Dock}, or possibly throws an exception if none are found (depending on stream implementation details).
      * @throws java.util.NoSuchElementException if the station has no free dock.
-     * **Note: The implementation assumes at least one free dock exists if called.**
-     * **ASSUMPTION: Dock provides isFree().
      */
     public Dock getFreeDock()
     { 
@@ -85,7 +71,7 @@ public class BikeStation
     }
 
     /**
-     * Adds a new 
+     * @return An unmodifiable view of the docks, sorted.
      */
     public List<Dock> getDocks()
     {
@@ -95,7 +81,7 @@ public class BikeStation
     /**
      * Adds a new {@link Dock} to the station.
      * @param dock The new Dock unit.
-     * @throws NullPointerException if dosck is null.
+     * @throws NullPointerException if dock is null.
      */
     public void addDock(Dock dock)
     {
@@ -120,9 +106,8 @@ public class BikeStation
     }
 
     /**
-     * @return A string with the id, location and docks of the station.
+     * @return A string with the id, location and recharged bikes of the station.
      */
-
     @Override
     public String toString()
     {

@@ -16,10 +16,6 @@ import java.util.*;
 public class EBikeDemo
 {
 
-    /** The maximum X coordinate for the grid (number of rows). */
-    public static final int MAXX = 20; 
-    /** The maximum Y coordinate for the grid (number of columns). */
-    public static final int MAXY = 20; 
 
     /** The maximum number of turns. */
     public static final int MAXSTEPS = 50;
@@ -73,12 +69,9 @@ public class EBikeDemo
      */
     public void run()
     {        
-        //Ejecutamos un número de pasos la simulación.
-        //En cada paso, cada persona de reparto realiza su acción
         for(int step = 0; step < MAXSTEPS; step++) {
             step(step);
         }
-        //TODO: Complete this code (show the final info)
         showFinalInfo();
     }
 
@@ -88,7 +81,6 @@ public class EBikeDemo
      */
     public void step(int step)
     {
-        //TODO: Complete this code: for each bike, act
         Iterator<ElectricBike> iterator = bikes.iterator();
         while (iterator.hasNext()) {
             ElectricBike bike = iterator.next();

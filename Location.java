@@ -1,4 +1,3 @@
-import java.util.*;
 
 /**
  * Model a location in a two-dimensional grid city using (x, y) coordinates.
@@ -14,8 +13,8 @@ public class Location
 
     /**
      * Model a location in the city.
-     * @param x The x coordinate. Must be non-negative.
-     * @param y The y coordinate. Must be non-negative.
+     * @param x The x coordinate. Must be non-negative and less than 20.
+     * @param y The y coordinate. Must be non-negative and less than 20.
      * @throws IllegalArgumentException If a coordinate is out of range.
      */
     public Location(int x, int y)
@@ -33,7 +32,7 @@ public class Location
     }
 
     /**
-     * Generates the next location to visit in a direct line (Manhattan-style diagonal/straight move) 
+     * Generates the next location to visit in a direct line (diagonal/straight move) 
      * from this location to the destination.
      * @param destination The {@link Location} we want to get to.
      * @return The next {@link Location} one step closer to the destination. Returns the destination

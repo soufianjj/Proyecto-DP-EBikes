@@ -15,7 +15,7 @@ public class EBCompany
     private final Set <ElectricBike> bikes;
     private final List <BikeStation> stations;
     /**
-     * Constructor for objects of class EVCompany.
+     * Constructor for objects of class EBCompany.
      * @param name The name of the company.
      */
     public EBCompany(String name)
@@ -115,12 +115,5 @@ public class EBCompany
         return stations.size();
     }
     
-    /**
-     * Clears all managed bikes and stations, resetting the company to an empty state.
-     */
-    public void reset(){
-        bikes.clear();
-        stations.clear();
-    }
     
 }

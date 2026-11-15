@@ -169,18 +169,5 @@ public class EBCompanyTest
         assertEquals(1, company.getElectricBikes().size());
     }
 
-    /**
-     * Test that reset empties bikes and stations.
-     */
-    @Test
-    public void testReset()
-    {
-        company.addElectricBike(bike0);
-        company.addBikeStation(station0);
-        company.reset();
 
-        assertTrue(company.getElectricBikes().isEmpty());
-        assertEquals(0, company.getNumberOfStations());
-        assertEquals("EBBike Test", company.getName());
-    }
 }
