@@ -10,23 +10,24 @@ public class Location
 {
     private int x;
     private int y;
+    private static final int MAX_COORDINATE = 19;
 
     /**
      * Model a location in the city.
      * @param x The x coordinate. Must be non-negative.
      * @param y The y coordinate. Must be non-negative.
-     * @throws IllegalArgumentException If a coordinate is negative.
+     * @throws IllegalArgumentException If a coordinate is out of range.
      */
     public Location(int x, int y)
     {
-        if(x < 0) {
+        if (x < 0 || x > MAX_COORDINATE) {
             throw new IllegalArgumentException(
-                "Negative x-coordinate: " + x);
+                "x-coordinate out of range (0-" + MAX_COORDINATE + "): " + x);
         }
-        if(y < 0) {
+        if (y < 0 || y > MAX_COORDINATE) {
             throw new IllegalArgumentException(
-                "Negative y-coordinate: " + y);
-        }        
+                "y-coordinate out of range (0-" + MAX_COORDINATE + "): " + y);
+        }
         this.x = x;
         this.y = y;
     }
@@ -67,7 +68,7 @@ public class Location
     public boolean equals(Object other)
     {
         if(this == other){
-           return true; 
+            return true; 
         }
         if(!(other instanceof Location)){
             return false;

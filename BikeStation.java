@@ -126,8 +126,7 @@ public class BikeStation
     @Override
     public String toString()
     {
-        return "BikeStation{id='" + id + "', location=" + location + ", docks=" + 
-        docks.stream().map(Dock::toString).collect(Collectors.joining(", ", "[", "]")) + "}";
+        return "BikeStation: " + id + ", " + getBikesRechargedCount() + ", " + location;
     }
 
     /**

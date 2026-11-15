@@ -21,7 +21,6 @@ public class Dock
 
     /**
      * Constructor for objects of class Dock.
-     * //TODO complete the JavaDoc comments
      */
     public Dock(String id, int speed, float fee)
     {
@@ -48,8 +47,8 @@ public class Dock
      */
     public String toString()
     {
-        return "(Dock: " + id + ", " + chargingSpeed + "wh, " + chargingFee + "€, "
-        + getNumerEVRecharged() + ", " + amountCollected + "€)";
+        return "Dock: " + id + ", " + chargingSpeed + "wh, " + chargingFee + "€, "
+        + getNumerEVRecharged() + ", " + amountCollected + "€";
     }    
 
     /**
@@ -62,7 +61,6 @@ public class Dock
     /**
      * Simulates the charging process for an {@link ElectricBike}.
      * Increases the amount collected and registers the bike as recharged.
-     * //TODO complete the JavaDoc comments
      */
     public float recharge(ElectricBike bike, int wh){
         if (bike == null) {
